@@ -38,11 +38,15 @@ const deleteproject= (id) => {
         <thead className="bg-blue-600 text-white">
             <tr>
                 <th>S. No.</th>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>City</th>
-                <th>Date</th>
+                {/* <th>Project ID</th> */}
+                <th>Title</th>
+                {/* <th>difficulty</th> */}
+                <th>description</th>
+                <th>language</th>
+                <th>Tags</th>
+                <th>CompanyName</th>
+                <th>CreatedAt</th>
+                <th>Deadline</th>
                 <th>Action</th>
                 <th colSpan={2}>Actions</th>
             </tr>
@@ -55,11 +59,15 @@ const deleteproject= (id) => {
                   className={`border-2 border-blue-300 ${index % 2 === 0 ? 'bg-blue-100' : 'bg-blue-200'}`}>
                      
                     <td className="p-3">{index + 1}</td>
-                    <td className="p-3">{project._id}</td>
-                    <td className="p-3">{project.name}</td>
-                    <td className="p-3">{project.email}</td>
-                    <td className="p-3">{project.city}</td>
+                    {/* <td className="p-3">{project._id}</td> */}
+                    <td className="p-3">{project.title}</td>
+                    {/* <td className="p-3">{project.difficulty}</td> */}
+                    <td className="p-3">{project.description}</td>
+                    <td className="p-3">{project.language}</td>
+                    <td className="p-3">{project.tags}</td>
+                    <td className="p-3">{project.companyName}</td>
                     <td className="p-3">{new Date(project.createdAt).toLocaleDateString()}</td>
+                    <td className="p-3">{new Date(project.deadline).toLocaleDateString()}</td>
                     
                     <td>
                         <button onClick={ () => {deleteproject(project._id) } }

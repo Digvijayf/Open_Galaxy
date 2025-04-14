@@ -1,5 +1,5 @@
 
-   'use client';
+'use client';
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -37,7 +37,7 @@ const Footer = () => {
           &copy; 2025 Open Galaxy. All rights reserved.
         </p>
         <p className="text-sm mt-2">
-          <a href="/terms" className="hover:text-gray-400">Terms of Service</a> | 
+          <a href="/terms" className="hover:text-gray-400">Terms of Service</a> |
           <a href="/privacy" className="hover:text-gray-400 ml-2">Privacy Policy</a>
         </p>
       </div>
@@ -47,63 +47,28 @@ const Footer = () => {
 
 // Upload File Page Component
 const UploadFilePage = () => {
-  const [file, setFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [preview, setPreview] = useState('');
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    console.log('Selected file:', selectedFile);
-    setFile(selectedFile);
-  };
+  const upload = (e) => {
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const file = e.target.files[0];
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', 'mypreset')
+    fd.append('cloud_name', 'dng2mcid4')
 
-    if (!file) {
-      setMessage('Please select a file to upload.');
-      return;
-    }
+        axios.post('https://api.cloudinary.com/v1_1/dng2mcid4/image/upload', fd)
+        .then((result) => {
+          toast.success('file upload successfully');
+          console.log(result.data);
+          setPreview(result.data.url);
+          // productForm.setFieldValue('image', result.data.url);
+        }).catch((err) => {
+          console.log(err);
+          toast.error('failed to upload file');
 
-    if (file.size > 5 * 1024 * 1024) { // Example: 5MB limit
-      setMessage('File size exceeds the 5MB limit.');
-      return;
-    }
-    if (!['image/jpeg', 'image/png'].includes(file.type)) {
-      setMessage('Only JPEG and PNG files are allowed.');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      setUploading(true);
-      setMessage('');
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/upload`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        setMessage('File uploaded successfully!');
-      } else {
-        setMessage('Failed to upload the file. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      setMessage('An error occurred while uploading the file.');
-    } finally {
-      setUploading(false);
-    }
-  };
-
+        });
+  }
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar */}
@@ -118,13 +83,13 @@ const UploadFilePage = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label
-                htmlFor="file"
+                htmlFor="upload"
                 className="block text-sm font-medium text-gray-700"
               >
-                Choose a file
+                <input type="file" onChange={upload} id='upload' hidden/>
               </label>
               <input
-                type="file"
+                type="text"
                 id="file"
                 onChange={handleFileChange}
                 className="mt-2 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -133,11 +98,10 @@ const UploadFilePage = () => {
             <button
               type="submit"
               disabled={uploading}
-              className={`w-full py-2 px-4 text-white font-semibold rounded-lg ${
-                uploading
+              className={`w-full py-2 px-4 text-white font-semibold rounded-lg ${uploading
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-indigo-600 hover:bg-indigo-700'
-              }`}
+                }`}
             >
               {uploading ? 'Uploading...' : 'Upload'}
             </button>

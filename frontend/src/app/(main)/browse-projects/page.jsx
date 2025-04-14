@@ -1,5 +1,6 @@
 'use client';
 import axios from 'axios';
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 
 // Navbar Component
@@ -11,7 +12,7 @@ const Navbar = () => {
         <div className="space-x-6">
           <a href="/" className="text-white hover:text-gray-200">Home</a>
           <a href="/about" className="text-white hover:text-gray-200">About</a>
-          <a href="/internships" className="text-white hover:text-gray-200">Internships</a>
+          <Link href="/admin/manage-project" className="text-white hover:text-gray-200">project</Link>
           <a href="/contact" className="text-white hover:text-gray-200">Contact</a>
         </div>
       </div>
@@ -20,13 +21,12 @@ const Navbar = () => {
 };
 
 // ProjectCard Component
-const ProjectCard = ({ id, title, difficulty, description, language, image, tags, createdAt, enrollInProject }) => {
+const ProjectCard = ({ id, title, description, language, image, tags, createdAt, enrollInProject }) => {
   return (
     <div className="max-w-xs w-full rounded-lg overflow-hidden shadow-md bg-white">
       <img src={image} alt={title} className="w-full h-40 object-cover" />
       <div className="p-6">
         <h3 className="text-xl font-semibold text-gray-800 mb-2">{title}</h3>
-        <p className="text-sm text-gray-600 mb-2">Difficulty: <strong>{difficulty}</strong></p>
         <p className="text-sm text-gray-600 mb-2">Language: <strong>{language}</strong></p>
         <p className="text-sm text-gray-600 mb-2">Tags: {tags.join(', ')}</p>
         <p className="text-sm text-gray-600 mb-4">{description}</p>

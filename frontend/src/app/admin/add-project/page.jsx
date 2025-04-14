@@ -16,9 +16,10 @@ const AddProject = () => {
       description: '',
       tags: '',
       duration: '',
-      skills: '',
+      language: '',
       deadline: '',
-      name: ''
+      companyName: '',
+      image: ''
     },
 
     onSubmit: (value, { resetForm, setSubmitting }) => {
@@ -40,6 +41,30 @@ const AddProject = () => {
     },
     // validationSchema: projectFormSchema
   })
+
+
+  const [preview, setPreview] = useState('');
+
+  const upload = (e) => {
+
+    const file = e.target.files[0];
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', 'mypreset')
+    fd.append('cloud_name', 'dng2mcid4')
+
+        axios.post('https://api.cloudinary.com/v1_1/dng2mcid4/image/upload', fd)
+        .then((result) => {
+          toast.success('file upload successfully');
+          console.log(result.data);
+          setPreview(result.data.url);
+          projectForm.setFieldValue('image', result.data.url);
+        }).catch((err) => {
+          console.log(err);
+          toast.error('failed to upload file');
+
+        });
+  }
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
@@ -152,6 +177,22 @@ const AddProject = () => {
           />
           {/* {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName}</p>} */}
         </div>
+        <div className="mb-4">
+          <label htmlFor="upload" className="block text-gray-700">
+            Image
+                  <input type="file"  onChange={upload} id='upload' hidden/>
+          </label>
+          <input
+            type="text"
+            id="image"
+            value={projectForm.values.image}
+            onChange={projectForm.handleChange}
+            className="mt-1 p-2 border rounded w-full"
+            placeholder="Enter your company name"
+          />
+          {/* {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName}</p>} */}
+        </div>
+
 
         {/* Submit Button */}
         <div className="mb-4">

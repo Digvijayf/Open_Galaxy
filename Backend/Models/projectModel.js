@@ -2,13 +2,14 @@ const { Schema, model } = require('../connection');
 
 const projectSchema = new Schema({
     title: String,
-   // stack: String,
-    difficulty: String,
     description: String,
     language: String,
-    image: String,
+    duration: String,
+    deadline: String,
     tags: Array,
-    createdAt: Date
+    companyName: String,
+    image: String,
+    createdAt: {type: Date, default: Date.now }
 });
 
 module.exports = model('project', projectSchema);

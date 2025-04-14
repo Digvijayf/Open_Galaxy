@@ -1,139 +1,261 @@
-'use client'
+'use client';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useFormik } from 'formik';
+import { useParams, useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+const ViewProjectForm = () => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [project, setProject] = useState(null);
+  const [error, setError] = useState(null);
 
-export default function ViewProjectPage() {
-  const { id } = useParams()
-  const [project, setProject] = useState(null)
-  const [editMode, setEditMode] = useState(false)
+  const { id } = useParams();
 
-  // Simulated user role (you can fetch this from session/auth later)
-  const userRole = 'admin' // or 'mentor' or 'viewer'
-
+  // Fetch project details from the backend
   useEffect(() => {
-    async function fetchProject() {
-      const res = await fetch(`/api/projects/${id}`)
-      const data = await res.json()
-      setProject(data)
-    }
+    const fetchProject = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/project/getbyid/${id}`); // Replace '1' with dynamic ID
+        setProject(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load project details.');
+        setLoading(false);
+      }
+    };
 
-    if (id) fetchProject()
-  }, [id])
+    fetchProject();
+  }, []);
 
-  function handleChange(e) {
-    const { name, value } = e.target
-    setProject((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
+  // Formik initialization
+  const projectForm = useFormik({
+    initialValues: {
+      title: project?.title || '',
+      description: project?.description || '',
+      techStack: project?.techStack || '',
+      duration: project?.duration || '',
+      mentor: project?.mentor || '',
+      category: project?.category || '',
+      level: project?.level || '',
+      status: project?.status || '',
+      company: project?.company || '',
+    },
+    enableReinitialize: true, // Allows form to update when project data is fetched
+    onSubmit: (values) => {
+      console.log(values);
+      toast.success('Form submitted successfully!');
+    },
+  });
 
-  function handleSave() {
-    console.log('Saving project data:', project)
-    // Add API call here to update
-    setEditMode(false)
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center">
+  //       <p className="text-gray-600 text-lg">Loading project details...</p>
+  //     </div>
+  //   );
+  // }
 
-  if (!project) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-gray-600 text-lg">Loading project...</p>
-      </div>
-    )
-  }
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center">
+  //       <p className="text-red-600 text-lg">{error}</p>
+  //     </div>
+  //   );
+  // }
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Project Details</h1>
-        {userRole === 'admin' || userRole === 'mentor' ? (
-          <button
-            onClick={() => setEditMode((prev) => !prev)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-          >
-            {editMode ? 'Cancel' : 'Edit Project'}
-          </button>
-        ) : null}
-      </div>
-
-      <div className="bg-white shadow-md rounded-xl p-6 space-y-6 border border-gray-100">
-        {[
-          { label: 'Project Title', name: 'title', type: 'text' },
-          { label: 'Description', name: 'description', type: 'textarea' },
-          { label: 'Difficulty', name: 'difficulty', type: 'text' },
-          { label: 'Mentor Name', name: 'mentorName', type: 'text' },
-          { label: 'Mentor Email', name: 'mentorEmail', type: 'email' },
-          { label: 'GitHub Repository', name: 'githubUrl', type: 'text' },
-          { label: 'Organization', name: 'organization', type: 'text' },
-        ].map((field) => (
-          <div key={field.name}>
-            <label className="block text-sm font-medium text-gray-700">{field.label}</label>
-            {field.type === 'textarea' ? (
-              <textarea
-                name={field.name}
-                value={project[field.name]}
-                onChange={handleChange}
-                readOnly={!editMode}
-                className={`w-full mt-1 px-4 py-2 border rounded-md h-32 ${
-                  editMode ? 'bg-white' : 'bg-gray-100 cursor-not-allowed'
-                }`}
-              />
-            ) : (
-              <input
-                type={field.type}
-                name={field.name}
-                value={project[field.name]}
-                onChange={handleChange}
-                readOnly={!editMode}
-                className={`w-full mt-1 px-4 py-2 border rounded-md ${
-                  editMode ? 'bg-white' : 'bg-gray-100 cursor-not-allowed'
-                }`}
-              />
-            )}
+    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
+      {/* Navbar */}
+      <nav className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <img src="https://openmoji.org/data/color/svg/1F680.svg" alt="Logo" className="w-8 h-8" />
+            <span className="text-xl font-bold text-indigo-600">Open Galaxy</span>
           </div>
-        ))}
+          <div className="hidden md:flex space-x-6 text-sm font-medium">
+            <a href="/" className="hover:text-indigo-600">Home</a>
+            <a href="/browse-internships" className="hover:text-indigo-600">Browse Internships</a>
+            <a href="/post-internship" className="hover:text-indigo-600">Post Internship</a>
+            <a href="/about" className="hover:text-indigo-600">About</a>
+          </div>
+          <div>
+            <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-sm">Login</button>
+          </div>
+        </div>
+      </nav>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Tech Stack</label>
-          {editMode ? (
+      {/* View Project Form */}
+      <main className="flex-grow max-w-5xl mx-auto px-6 py-10 bg-white mt-10 rounded-xl shadow-md">
+        <h1 className="text-3xl font-semibold text-indigo-700 mb-8">View Project Details</h1>
+
+        <form className="space-y-6" onSubmit={projectForm.handleSubmit}>
+          {/* Project Title */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Project Title</label>
+            <input
+              type="text"
+              name="title"
+              value={projectForm.values.title}
+              onChange={projectForm.handleChange}
+              readOnly
+              className="w-full px-4 py-2 border rounded-lg bg-gray-100"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Project Description</label>
+            <textarea
+              name="description"
+              rows="5"
+              value={projectForm.values.description}
+              onChange={projectForm.handleChange}
+              readOnly
+              className="w-full px-4 py-2 border rounded-lg bg-gray-100"
+            ></textarea>
+          </div>
+
+          {/* Tech Stack */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Tech Stack</label>
             <input
               type="text"
               name="techStack"
-              value={project.techStack.join(', ')}
-              onChange={(e) =>
-                setProject((prev) => ({
-                  ...prev,
-                  techStack: e.target.value.split(',').map((item) => item.trim()),
-                }))
-              }
-              className="w-full mt-1 px-4 py-2 border rounded-md bg-white"
+              value={projectForm.values.techStack}
+              onChange={projectForm.handleChange}
+              readOnly
+              className="w-full px-4 py-2 border rounded-lg bg-gray-100"
             />
-          ) : (
-            <div className="flex flex-wrap gap-2 mt-1">
-              {project.techStack.map((tech, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
+          </div>
 
-        {editMode && (
+          {/* Two Columns: Duration & Mentor */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-1">Duration</label>
+              <input
+                type="text"
+                name="duration"
+                value={projectForm.values.duration}
+                onChange={projectForm.handleChange}
+                readOnly
+                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Mentor</label>
+              <input
+                type="text"
+                name="mentor"
+                value={projectForm.values.mentor}
+                onChange={projectForm.handleChange}
+                readOnly
+                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
+              />
+            </div>
+          </div>
+
+          {/* Two Columns: Category & Level */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-1">Category</label>
+              <input
+                type="text"
+                name="category"
+                value={projectForm.values.category}
+                onChange={projectForm.handleChange}
+                readOnly
+                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Level</label>
+              <input
+                type="text"
+                name="level"
+                value={projectForm.values.level}
+                onChange={projectForm.handleChange}
+                readOnly
+                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
+              />
+            </div>
+          </div>
+
+          {/* Company */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Company</label>
+            <input
+              type="text"
+              name="company"
+              value={projectForm.values.company}
+              onChange={projectForm.handleChange}
+              readOnly
+              className="w-full px-4 py-2 border rounded-lg bg-gray-100"
+            />
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Status</label>
+            <input
+              type="text"
+              name="status"
+              value={projectForm.values.status}
+              onChange={projectForm.handleChange}
+              readOnly
+              className={`w-full px-4 py-2 border rounded-lg font-semibold ${
+                projectForm.values.status === 'Open for Applications'
+                  ? 'text-green-700 bg-green-50'
+                  : 'text-red-700 bg-red-50'
+              }`}
+            />
+          </div>
+
+          {/* Apply Button */}
           <div className="pt-4">
             <button
-              onClick={handleSave}
-              className="px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+              type="button"
+              className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-all"
             >
-              Save Changes
+              Apply for Internship
             </button>
           </div>
-        )}
-      </div>
+        </form>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white border-t mt-16">
+        <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold">Open Galaxy</h3>
+            <p className="text-sm text-gray-600 mt-2">
+              Empowering open-source internships, one project at a time.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-md font-semibold">Quick Links</h4>
+            <ul className="mt-2 space-y-2 text-sm text-gray-600">
+              <li><a href="/" className="hover:text-indigo-600">Home</a></li>
+              <li><a href="/browse-internships" className="hover:text-indigo-600">Browse Internships</a></li>
+              <li><a href="/post-internship" className="hover:text-indigo-600">Post Internship</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-md font-semibold">Contact</h4>
+            <ul className="mt-2 text-sm text-gray-600">
+              <li>Email: support@opengalaxy.dev</li>
+              <li>Twitter: @OpenGalaxy</li>
+              <li>GitHub: github.com/opengalaxy</li>
+            </ul>
+          </div>
+        </div>
+        <div className="text-center text-sm text-gray-400 py-4 border-t">
+          © 2025 Open Galaxy. All rights reserved.
+        </div>
+      </footer>
     </div>
-  )
-}
+  );
+};
+
+export default ViewProjectForm;
