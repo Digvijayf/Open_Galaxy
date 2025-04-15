@@ -32,16 +32,16 @@ const ViewProjectForm = () => {
   // Formik initialization
   const projectForm = useFormik({
     initialValues: {
-      title: project?.title || '',
-      description: project?.description || '',
-      techStack: project?.techStack || '',
-      duration: project?.duration || '',
-      mentor: project?.mentor || '',
-      category: project?.category || '',
-      level: project?.level || '',
-      status: project?.status || '',
-      company: project?.company || '',
-    },
+      title:'',
+      description:  '',
+      techStack: '',
+      duration:  '',
+      mentor:  '',
+      category:  '',
+      level: '',
+      status:  '',
+      company: '' 
+           },
     enableReinitialize: true, // Allows form to update when project data is fetched
     onSubmit: (values) => {
       console.log(values);
@@ -76,7 +76,7 @@ const ViewProjectForm = () => {
           </div>
           <div className="hidden md:flex space-x-6 text-sm font-medium">
             <a href="/" className="hover:text-indigo-600">Home</a>
-            <a href="/browse-internships" className="hover:text-indigo-600">Browse Internships</a>
+            <a href="/browse-projects" className="hover:text-indigo-600">Browse Projects</a>
             <a href="/post-internship" className="hover:text-indigo-600">Post Internship</a>
             <a href="/about" className="hover:text-indigo-600">About</a>
           </div>
@@ -237,7 +237,7 @@ const ViewProjectForm = () => {
             <h4 className="text-md font-semibold">Quick Links</h4>
             <ul className="mt-2 space-y-2 text-sm text-gray-600">
               <li><a href="/" className="hover:text-indigo-600">Home</a></li>
-              <li><a href="/browse-internships" className="hover:text-indigo-600">Browse Internships</a></li>
+              <li><a href="/browse-projects" className="hover:text-indigo-600">Browse Projects</a></li>
               <li><a href="/post-internship" className="hover:text-indigo-600">Post Internship</a></li>
             </ul>
           </div>
@@ -259,3 +259,5 @@ const ViewProjectForm = () => {
 };
 
 export default ViewProjectForm;
+
+

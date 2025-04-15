@@ -2,6 +2,7 @@
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 // Navbar Component
 const Navbar = () => {
@@ -22,16 +23,19 @@ const Navbar = () => {
 
 // ProjectCard Component
 const ProjectCard = ({ id, title, description, language, image, tags, createdAt, enrollInProject }) => {
+  console.log(enrollInProject);
+  
   return (
     <div className="max-w-xs w-full rounded-lg overflow-hidden shadow-md bg-white">
       <img src={image} alt={title} className="w-full h-40 object-cover" />
       <div className="p-6">
+        {id}
         <h3 className="text-xl font-semibold text-gray-800 mb-2">{title}</h3>
         <p className="text-sm text-gray-600 mb-2">Language: <strong>{language}</strong></p>
         <p className="text-sm text-gray-600 mb-2">Tags: {tags.join(', ')}</p>
         <p className="text-sm text-gray-600 mb-4">{description}</p>
         <p className="text-xs text-gray-500">Created At: {new Date(createdAt).toLocaleDateString()}</p>
-        <button onClick={() => { enrollInProject(id) }} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none w-full">
+        <button onClick={enrollInProject} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none w-full">
           Apply Now
         </button>
       </div>
@@ -136,7 +140,7 @@ const BrowsePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [internships, setInternships] = useState([]);
   const internshipsPerPage = 6;
-  const token = localStorage.getItem('user');
+  const token = localStorage.getItem('token');
 
   const fetchProjects = async () => {
     try {
@@ -149,6 +153,7 @@ const BrowsePage = () => {
 
       // Ensure the data matches the backend model
       const formattedData = data.map((project) => ({
+        _id: project._id,
         title: project.title,
         difficulty: project.difficulty,
         description: project.description,
@@ -189,45 +194,48 @@ const BrowsePage = () => {
   };
 
   const enrollInProject = async (projectId) => {
-    try {
-      // Check if the user is already enrolled
-      const isAlreadyEnrolled = internships.some(
-        (internship) => internship.id === projectId && internship.isEnrolled
-      );
+    console.log(projectId);
+    
 
-      if (isAlreadyEnrolled) {
-        alert('You are already enrolled in this project.');
-        return;
-      }
-
-      // Make the enrollment request
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/project/enroll`,
-        { projectId },
-        {
-          headers: {
-            'x-auth-token': token,
-          },
-        }
-      );
-
-      if (res.status === 200) {
-        alert('Successfully enrolled in the project!');
-        // Update the state to reflect the enrollment
-        setInternships((prevInternships) =>
-          prevInternships.map((internship) =>
-            internship.id === projectId
-              ? { ...internship, isEnrolled: true }
-              : internship
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/enroll/checkenrolled/${projectId}`, {
+      headers: {
+        'x-auth-token': token,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200 && response.data.isEnrolled) {
+          alert('You are already enrolled in this project.');
+          return;
+        } else {
+          axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/enroll/add`,
+            { project: projectId }, {
+            headers: {
+              'x-auth-token': token,
+            },
+          })
+          .then(
+            (response) => {
+              if (response.status === 200) {
+                toast.success('Successfully enrolled in the project!');
+              } else {
+                toast.error('Failed to enroll in the project. Please try again.');
+              }
+            })
+          .catch((error) => {
+            console.error('Error enrolling in project:', error);
+            alert('An error occurred while enrolling in the project. Please try again later.');
+          }
           )
-        );
-      } else {
-        alert('Failed to enroll in the project. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error enrolling in project:', error);
-      alert('An error occurred while enrolling in the project. Please try again later.');
-    }
+
+        }
+      })
+      .catch((error) => {
+        console.error('Error checking enrollment:', error);
+        alert('An error occurred while checking enrollment. Please try again later.');
+      });
+
+    
   };
 
   return (
@@ -252,7 +260,7 @@ const BrowsePage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {currentInternships.map((internship, index) => (
               <ProjectCard
-                enrollInProject={enrollInProject}
+                enrollInProject={() => enrollInProject(internship._id)}
                 key={index}
                 id={internship._id}
                 title={internship.title}

@@ -42,7 +42,6 @@ const AddProject = () => {
     // validationSchema: projectFormSchema
   })
 
-
   const [preview, setPreview] = useState('');
 
   const upload = (e) => {
@@ -193,7 +192,6 @@ const AddProject = () => {
           {/* {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName}</p>} */}
         </div>
 
-
         {/* Submit Button */}
         <div className="mb-4">
           <button
@@ -209,7 +207,3 @@ const AddProject = () => {
 };
 
 export default AddProject;
-
-
-
-

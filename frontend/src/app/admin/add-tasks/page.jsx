@@ -8,38 +8,58 @@ const TaskForm = () => {
 
 
 
-   //initializing formikk
+    //initializing formikk
     const taskForm = useFormik({
         initialValues: {
             title: "",
             description: "",
             // status:"",
-            deadline:"",
-            assignedTo:"",
-            associatedInternship:"",
-            priority:"Low"
+            deadline: "",
+            assignedTo: "",
+            associatedInternship: "",
+            priority: "Low"
         },
 
         onSubmit: (value, { resetForm, setSubmitting }) => {
             console.log(value);
-      
+
             // send values to backend
             //sending request to backend
             axios.post('http://localhost:5000/task/add', value)
-              .then((result) => {
-                toast.success('project registered successfully');
-                resetForm();
+                .then((result) => {
+                    toast.success('project registered successfully');
+                    resetForm();
 
-              }).catch((err) => {
-                console.log(err);
-                toast.error('something went wrong');
-                setSubmitting(false);
-              });
-            },
+                }).catch((err) => {
+                    console.log(err);
+                    toast.error('something went wrong');
+                    setSubmitting(false);
+                });
+        },
     })
 
     return (
         <div className='flex justify-center items-center min-h-screen'>
+
+            {/* Navbar */}
+            <nav className="bg-white shadow">
+                <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                        <img src="https://openmoji.org/data/color/svg/1F680.svg" alt="Logo" className="w-8 h-8" />
+                        <span className="text-xl font-bold text-indigo-600">Open Galaxy</span>
+                    </div>
+                    <div className="hidden md:flex space-x-6 text-sm font-medium">
+                        <a href="/" className="hover:text-indigo-600">Home</a>
+                        <a href="/browse-projects" className="hover:text-indigo-600">Browse Projects</a>
+                        <a href="/post-internship" className="hover:text-indigo-600">Post Internship</a>
+                        <a href="/about" className="hover:text-indigo-600">About</a>
+                    </div>
+                    <div>
+                        <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-sm">Login</button>
+                    </div>
+                </div>
+            </nav>
+
             <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-bold mb-4 text-gray-800">Create New Task</h2>
 
@@ -116,7 +136,7 @@ const TaskForm = () => {
                             type="date"
                             id="deadline"
                             name="deadline"
-                            value={taskForm.values.deadline }
+                            value={taskForm.values.deadline}
                             onChange={taskForm.handleChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
@@ -124,13 +144,13 @@ const TaskForm = () => {
 
                     <div className="mb-6 mt-2">
                         <label htmlFor="assignedTo" className="block text-sm font-medium text-gray-700 mb-1">
-                         AssignedTo
+                            AssignedTo
                         </label>
                         <input
                             type="date"
                             id="assignedTo"
                             name="assignedTo"
-                            value={taskForm.values.assignedTo }
+                            value={taskForm.values.assignedTo}
                             onChange={taskForm.handleChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
@@ -138,7 +158,7 @@ const TaskForm = () => {
 
                     <div className="mb-6 mt-2">
                         <label htmlFor="associatedInternship" className="block text-sm font-medium text-gray-700 mb-1">
-                        AssociatedInternship
+                            AssociatedInternship
                         </label>
                         <input
                             type="date"

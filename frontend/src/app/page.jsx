@@ -1,4 +1,5 @@
 'use client';
+import Link from "next/link";
 import React, { useState } from 'react';
 
 const OpenGalaxyLandingPage = () => {
@@ -133,6 +134,8 @@ const OpenGalaxyLandingPage = () => {
             <a href="#" className="text-gray-700 hover:text-indigo-600">For Companies</a>
             <a href="#" className="text-gray-700 hover:text-indigo-600">Resources</a>
             <a href="#" className="text-gray-700 hover:text-indigo-600">About Us</a>
+            <a href="#" className="text-gray-700 hover:text-indigo-600">Contact</a>
+            <Link href="/main/AboutUs" className="text-white hover:text-gray-200">Abb</Link>
           </div>
           <div className="flex items-center space-x-4">
             <button 

@@ -1,4 +1,4 @@
-const uri=require('jsonwebtoken');
+const jwt=require('jsonwebtoken');
 require('dotenv').config();
 
 const verifyToken=(req,res,next) => {
@@ -11,7 +11,7 @@ const verifyToken=(req,res,next) => {
     else{
         jwt.verify(
             token,
-            process.env.MONGO_URI,
+            process.env.JWT_SECRET,
             (err,payload) => {
                 if(err)
                     {
