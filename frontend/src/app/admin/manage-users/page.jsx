@@ -15,7 +15,7 @@ const Navbar = () => {
             <a href="/admin/manage-users" className="hover:text-gray-300">Manage Users</a>
           </li>
           <li>
-            <a href="/admin/manage-projects" className="hover:text-gray-300">Manage Projects</a>
+            <a href="/admin/manage-project" className="hover:text-gray-300">Manage Projects</a>
           </li>
           <li>
             <a href="/about" className="hover:text-gray-300">About</a>

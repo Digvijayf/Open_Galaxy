@@ -9,7 +9,7 @@ const OpenGalaxyLandingPage = () => {
   const [activeTab, setActiveTab] = useState('students');
 
   // Featured companies and internships (sample data)
-  const featuredCompanies = [
+  const featuredCompanies = [  
     { id: 1, name: 'TechForward', logo: '/api/placeholder/80/80', positions: 12 },
     { id: 2, name: 'CodeCraft', logo: '/api/placeholder/80/80', positions: 8 },
     { id: 3, name: 'DataFlow', logo: '/api/placeholder/80/80', positions: 5 },
@@ -38,7 +38,8 @@ const OpenGalaxyLandingPage = () => {
             <input type="password" className="w-full p-2 border rounded" placeholder="••••••••" />
             <div className="mt-1 text-sm text-blue-600 hover:underline cursor-pointer">Forgot password?</div>
           </div>
-          <button type="submit" className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">Log In</button>
+          <button type="submit" className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">LogIn</button>
+          
           <div className="mt-4 text-center">
             <span className="text-gray-600">Don't have an account?</span>
             <span 
@@ -130,12 +131,12 @@ const OpenGalaxyLandingPage = () => {
             <span className="text-2xl font-bold text-indigo-600">OpenGalaxy</span>
           </div>
           <div className="hidden md:flex space-x-8">
-            <a href="#" className="text-gray-700 hover:text-indigo-600">Browse Internships</a>
-            <a href="#" className="text-gray-700 hover:text-indigo-600">For Companies</a>
-            <a href="#" className="text-gray-700 hover:text-indigo-600">Resources</a>
-            <a href="#" className="text-gray-700 hover:text-indigo-600">About Us</a>
-            <a href="#" className="text-gray-700 hover:text-indigo-600">Contact</a>
-            <Link href="/main/AboutUs" className="text-white hover:text-gray-200">Abb</Link>
+            <a href="/browse-projects" className="text-gray-700 hover:text-indigo-600">Browse Projects</a>
+            <a href="/companies" className="text-gray-700 hover:text-indigo-600">For Companies</a>
+            <a href="/Resources" className="text-gray-700 hover:text-indigo-600">Resources</a>
+            <a href="/About" className="text-gray-700 hover:text-indigo-600">About</a>
+            <a href="/contact" className="text-gray-700 hover:text-indigo-600">Contact</a>
+            
           </div>
           <div className="flex items-center space-x-4">
             <button 
@@ -429,3 +430,4 @@ const OpenGalaxyLandingPage = () => {
 };
 
 export default OpenGalaxyLandingPage;
+

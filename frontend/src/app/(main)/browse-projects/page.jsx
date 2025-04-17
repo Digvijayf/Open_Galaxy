@@ -15,6 +15,8 @@ const Navbar = () => {
           <a href="/about" className="text-white hover:text-gray-200">About</a>
           <Link href="/admin/manage-project" className="text-white hover:text-gray-200">project</Link>
           <a href="/contact" className="text-white hover:text-gray-200">Contact</a>
+          <a href="/admin/add-project" className="text-white hover:text-gray-300">Add Project</a>
+          <a href="/admin/manage-project" className="text-white hover:text-indigo-100">Manage Project</a>
         </div>
       </div>
     </nav>
@@ -38,6 +40,9 @@ const ProjectCard = ({ id, title, description, language, image, tags, createdAt,
         <button onClick={enrollInProject} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none w-full">
           Apply Now
         </button>
+        <Link href={'/view-project/'+ id } className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none w-full">
+          View Details
+        </Link>
       </div>
     </div>
   );
@@ -121,6 +126,7 @@ const Footer = () => {
             <a href="/terms" className="text-white hover:text-gray-300">Terms of Service</a>
             <a href="/privacy" className="text-white hover:text-gray-300">Privacy Policy</a>
             <a href="/contact" className="text-white hover:text-gray-300">Contact</a>
+            <a href="/admin/add-project" className="text-white hover:text-gray-300">Add Project</a>
           </div>
         </div>
         <div className="mt-8 text-center text-sm text-gray-400">
@@ -141,6 +147,41 @@ const BrowsePage = () => {
   const [internships, setInternships] = useState([]);
   const internshipsPerPage = 6;
   const token = localStorage.getItem('token');
+  const [activeTab, setActiveTab] = useState('students');
+  const featuredInternships = [
+    {
+      id: 1,
+      title: "Open Source Frontend Developer",
+      company: "TechCorp",
+      location: "Remote",
+      stipend: "$1000/month",
+      tags: ["React", "TypeScript"]
+    },
+    {
+      id: 2,
+      title: "Backend Developer Intern",
+      company: "CloudScale",
+      location: "San Francisco",
+      stipend: "$1500/month",
+      tags: ["Node.js", "MongoDB"]
+    },
+    {
+      id: 3,
+      title: "Full Stack Developer",
+      company: "DevHub",
+      location: "Remote",
+      stipend: "$1200/month",
+      tags: ["React", "Node.js"]
+    },
+    {
+      id: 4,
+      title: "ML Engineer Intern",
+      company: "AI Solutions",
+      location: "New York",
+      stipend: "$2000/month",
+      tags: ["Python", "TensorFlow"]
+    }
+  ];
 
   const fetchProjects = async () => {
     try {
@@ -203,6 +244,7 @@ const BrowsePage = () => {
       },
     })
       .then((response) => {
+        
         if (response.status === 200 && response.data.isEnrolled) {
           alert('You are already enrolled in this project.');
           return;
@@ -242,6 +284,102 @@ const BrowsePage = () => {
     <div className="min-h-screen bg-gray-100">
       {/* Navbar */}
       <Navbar />
+
+      {/* Featured Opportunities Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8 flex justify-between items-center">
+            <h2 className="text-3xl font-bold text-gray-800">Featured Opportunities</h2>
+            <div className="inline-flex rounded-md shadow">
+              <Link 
+                href="/browse-projects" 
+                className="px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-50"
+              >
+                View All
+              </Link>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="mb-8 border-b">
+            <div className="flex space-x-8">
+              <button 
+                className={`pb-4 font-medium ${
+                  activeTab === 'students' 
+                    ? 'text-indigo-600 border-b-2 border-indigo-600' 
+                    : 'text-gray-500 hover:text-indigo-600'
+                }`}
+                onClick={() => setActiveTab('students')}
+              >
+                For Students
+              </button>
+              <button 
+                className={`pb-4 font-medium ${
+                  activeTab === 'companies' 
+                    ? 'text-indigo-600 border-b-2 border-indigo-600' 
+                    : 'text-gray-500 hover:text-indigo-600'
+                }`}
+                onClick={() => setActiveTab('companies')}
+              >
+                For Companies
+              </button>
+            </div>
+          </div>
+
+          {activeTab === 'students' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredInternships.map(internship => (
+                <div 
+                  key={internship.id} 
+                  className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2">{internship.title}</h3>
+                    <p className="text-indigo-600 mb-4">{internship.company}</p>
+                    <div className="flex items-center mb-2">
+                      <span className="text-gray-600 mr-2">📍</span>
+                      <span>{internship.location}</span>
+                    </div>
+                    <div className="flex items-center mb-4">
+                      <span className="text-gray-600 mr-2">💰</span>
+                      <span>{internship.stipend}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {internship.tags.map((tag, index) => (
+                        <span 
+                          key={index}
+                          className="px-2 py-1 bg-indigo-100 text-indigo-800 text-sm rounded"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <button 
+                      onClick={() => enrollInProject(internship.id)}
+                      className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
+                    >
+                      Apply Now
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-semibold mb-4">Are you a company looking to hire?</h3>
+              <p className="text-gray-600 mb-6">
+                Post your open source opportunities and connect with talented developers.
+              </p>
+              <Link 
+                href="/admin/Add-project"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+              >
+                Post a Project
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Main Content */}
       <div className="py-12 px-4 sm:px-6 lg:px-8">
@@ -290,5 +428,6 @@ const BrowsePage = () => {
 };
 
 export default BrowsePage;
+
 
 

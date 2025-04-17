@@ -1,15 +1,26 @@
 const express = require('express');
 const Router = require('../Models/enrollModel');
-// const { Model } = require('mongoose');
 const Model = require('../Models/enrollModel');
 const verifyToken = require('../Middleware/verifyToken');
 
 const router = express.Router();
 
-router.post('/add', verifyToken, (req, res) => {
-    req.body.user = req.user._id;
-    console.log(req.body);
-    new Model(req.body).save()
+// router.post('/add', verifyToken, (req, res) => {
+//     req.body.user = req.user._id;
+//     console.log(req.body);
+//     new Model(req.body).save()
+//         .then((result) => {
+//             res.status(200).json(result);
+//         }).catch((err) => {
+//             console.log(err);
+//             res.status(500).json(err);
+//         });
+// });
+
+// getall
+router.get('/getall', (req, res) => {
+
+    Model.find()
         .then((result) => {
             res.status(200).json(result);
         }).catch((err) => {
@@ -18,12 +29,9 @@ router.post('/add', verifyToken, (req, res) => {
         });
 });
 
-// getall
-//router.get('/getall', (req, res) => {
-// res.send('response from user getall');
-router.get('/getall', (req, res) => {
+router.get('/user', verifyToken, (req, res) => {
 
-    Model.find()
+    Model.find({user : req.user._id})
         .then((result) => {
             res.status(200).json(result);
         }).catch((err) => {
@@ -50,8 +58,6 @@ router.get('/checkenrolled/:projectid', verifyToken, (req, res) => {
 });
 
 // getbyid
-//router.get('/getbyid', (req, res) => {
-//res.send('response from user getbyid');
 router.get('/getbyid/:id', (req, res) => {
     Model.findById(req.params.id)
         .then((result) => {
@@ -63,8 +69,6 @@ router.get('/getbyid/:id', (req, res) => {
 });
 
 // update
-//router.get('/update', (req, res) => {
-//res.send('response from user update');
 router.put('/update/:id', (req, res) => {
 
     Model.findByIdAndUpdate(req.params.id, req.body, { new: true })
@@ -77,8 +81,6 @@ router.put('/update/:id', (req, res) => {
 });
 
 // delete
-//router.get('/delete', (req, res) => {
-//res.send('response from user delete');
 router.delete('/delete/:id', (req, res) => {
     Model.findByIdAndDelete(req.params.id)
         .then((result) => {
@@ -89,51 +91,38 @@ router.delete('/delete/:id', (req, res) => {
         });
 });
 
-const enrollInProject = async (projectId) => {
+router.post('/add', async (req, res) => {
   try {
-    // Check if the user is already enrolled by calling the checkenrolled endpoint
-    const checkResponse = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/project/checkenrolled/${projectId}`,
-      {
-        headers: {
-          'x-auth-token': token,
-        },
-      }
-    );
+    const { user, project } = req.body;
 
-    if (checkResponse.status === 200 && checkResponse.data.isEnrolled) {
-      alert('You are already enrolled in this project.');
-      return;
+    // Check if already enrolled
+    const existingEnrollment = await Model.findOne({ user, project });
+    if (existingEnrollment) {
+      return res.status(400).json({ message: 'Already applied for this project' });
     }
 
-    // Make the enrollment request
-    const enrollResponse = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/project/enroll`,
-      { projectId },
-      {
-        headers: {
-          'x-auth-token': token,
-        },
-      }
-    );
+    // Create new enrollment
+    const enrollment = new Model({
+      user,
+      project
+    });
 
-    if (enrollResponse.status === 200) {
-      alert('Successfully enrolled in the project!');
-      // Update the state to reflect the enrollment
-      setInternships((prevInternships) =>
-        prevInternships.map((internship) =>
-          internship.id === projectId
-            ? { ...internship, isEnrolled: true }
-            : internship
-        )
-      );
-    } else {
-      alert('Failed to enroll in the project. Please try again.');
-    }
+    await enrollment.save();
+
+    // Populate user and project details
+    const populatedEnrollment = await Model.findById(enrollment._id)
+      .populate('user', 'name email')
+      .populate('project', 'title description');
+
+    res.status(201).json({
+      message: 'Successfully applied',
+      enrollment: populatedEnrollment
+    });
+
   } catch (error) {
-    console.error('Error enrolling in project:', error);
-    alert('An error occurred while enrolling in the project. Please try again later.');
+    console.error('Enrollment error:', error);
+    res.status(500).json({ message: 'Failed to process enrollment' });
   }
-};
+});
 
 module.exports = router;

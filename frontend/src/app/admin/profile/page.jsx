@@ -48,11 +48,11 @@ const Footer = () => {
 // Profile Page Component
 const ProfilePage = () => {
   const [user, setUser] = useState({
-    name: 'John Doe',
+    name: 'Digvijay Yadav',
     bio: 'Passionate about open-source software and eager to learn.',
     avatar: 'https://via.placeholder.com/150',
-    email: 'johndoe@example.com',
-    location: 'San Francisco, CA',
+    email: 'ydigvijay836@gmail.com',
+    location: 'Lucknow, UttarPradesh, India',
     skills: ['React', 'Node.js', 'JavaScript', 'Python'],
   });
 

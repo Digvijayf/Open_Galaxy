@@ -8,13 +8,11 @@ import React, { useEffect, useState } from 'react'
 
 const Updateprojects = () => {
 
-
   const { id } = useParams();
 
   const [userData, setUserData] = useState(null);
   const [projectData, setprojectData] = useState(null);
   const router = useRouter();
-
 
   const fetchprojectData = async () => {
     const res = await axios.get(`http://localhost:5000/project/getbyid/${id}`);

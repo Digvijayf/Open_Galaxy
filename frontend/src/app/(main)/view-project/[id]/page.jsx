@@ -1,23 +1,19 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useFormik } from 'formik';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 
-const ViewProjectForm = () => {
-  const router = useRouter();
+const ViewProject = () => {
+  const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState(null);
   const [error, setError] = useState(null);
 
-  const { id } = useParams();
-
-  // Fetch project details from the backend
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/project/getbyid/${id}`); // Replace '1' with dynamic ID
+        const response = await axios.get(`http://localhost:5000/project/getbyid/${id}`);
         setProject(response.data);
         setLoading(false);
       } catch (err) {
@@ -27,43 +23,23 @@ const ViewProjectForm = () => {
     };
 
     fetchProject();
-  }, []);
+  }, [id]);
 
-  // Formik initialization
-  const projectForm = useFormik({
-    initialValues: {
-      title:'',
-      description:  '',
-      techStack: '',
-      duration:  '',
-      mentor:  '',
-      category:  '',
-      level: '',
-      status:  '',
-      company: '' 
-           },
-    enableReinitialize: true, // Allows form to update when project data is fetched
-    onSubmit: (values) => {
-      console.log(values);
-      toast.success('Form submitted successfully!');
-    },
-  });
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600 text-lg">Loading project details...</p>
+      </div>
+    );
+  }
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <p className="text-gray-600 text-lg">Loading project details...</p>
-  //     </div>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <p className="text-red-600 text-lg">{error}</p>
-  //     </div>
-  //   );
-  // }
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-600 text-lg">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
@@ -86,142 +62,74 @@ const ViewProjectForm = () => {
         </div>
       </nav>
 
-      {/* View Project Form */}
+      {/* View Project Details */}
       <main className="flex-grow max-w-5xl mx-auto px-6 py-10 bg-white mt-10 rounded-xl shadow-md">
-        <h1 className="text-3xl font-semibold text-indigo-700 mb-8">View Project Details</h1>
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-semibold text-indigo-700">Project Details</h1>
+          <a 
+            href="/browse-projects" 
+            className="text-indigo-600 hover:text-indigo-800"
+          >
+            Back to Projects
+          </a>
+        </div>
 
-        <form className="space-y-6" onSubmit={projectForm.handleSubmit}>
+        <div className="space-y-8">
           {/* Project Title */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Project Title</label>
-            <input
-              type="text"
-              name="title"
-              value={projectForm.values.title}
-              onChange={projectForm.handleChange}
-              readOnly
-              className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Project Description</label>
-            <textarea
-              name="description"
-              rows="5"
-              value={projectForm.values.description}
-              onChange={projectForm.handleChange}
-              readOnly
-              className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-            ></textarea>
-          </div>
-
-          {/* Tech Stack */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Tech Stack</label>
-            <input
-              type="text"
-              name="techStack"
-              value={projectForm.values.techStack}
-              onChange={projectForm.handleChange}
-              readOnly
-              className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-            />
-          </div>
-
-          {/* Two Columns: Duration & Mentor */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium mb-1">Duration</label>
-              <input
-                type="text"
-                name="duration"
-                value={projectForm.values.duration}
-                onChange={projectForm.handleChange}
-                readOnly
-                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Mentor</label>
-              <input
-                type="text"
-                name="mentor"
-                value={projectForm.values.mentor}
-                onChange={projectForm.handleChange}
-                readOnly
-                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-              />
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h2 className="font-semibold text-xl text-gray-900 mb-2">{project?.title}</h2>
+            <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+              {project?.category}
             </div>
           </div>
 
-          {/* Two Columns: Category & Level */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium mb-1">Category</label>
-              <input
-                type="text"
-                name="category"
-                value={projectForm.values.category}
-                onChange={projectForm.handleChange}
-                readOnly
-                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-              />
+          {/* Project Description */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="text-sm font-medium text-gray-500 mb-2">Description</h3>
+            <p className="text-gray-900">{project?.description}</p>
+          </div>
+
+          {/* Project Details Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Tech Stack</h3>
+              <p className="text-gray-900">{project?.techStack}</p>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Level</label>
-              <input
-                type="text"
-                name="level"
-                value={projectForm.values.level}
-                onChange={projectForm.handleChange}
-                readOnly
-                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-              />
+
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Duration</h3>
+              <p className="text-gray-900">{project?.duration}</p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Mentor</h3>
+              <p className="text-gray-900">{project?.mentor}</p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Level</h3>
+              <p className="text-gray-900">{project?.level}</p>
             </div>
           </div>
 
-          {/* Company */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Company</label>
-            <input
-              type="text"
-              name="company"
-              value={projectForm.values.company}
-              onChange={projectForm.handleChange}
-              readOnly
-              className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-            />
+          {/* Company Info */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="text-sm font-medium text-gray-500 mb-2">Company</h3>
+            <p className="text-gray-900">{project?.company}</p>
           </div>
 
-          {/* Status */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Status</label>
-            <input
-              type="text"
-              name="status"
-              value={projectForm.values.status}
-              onChange={projectForm.handleChange}
-              readOnly
-              className={`w-full px-4 py-2 border rounded-lg font-semibold ${
-                projectForm.values.status === 'Open for Applications'
-                  ? 'text-green-700 bg-green-50'
-                  : 'text-red-700 bg-red-50'
-              }`}
-            />
+          {/* Project Status */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="text-sm font-medium text-gray-500 mb-2">Status</h3>
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              project?.status === 'Open for Applications'
+                ? 'bg-green-100 text-green-800'
+                : 'bg-red-100 text-red-800'
+            }`}>
+              {project?.status}
+            </span>
           </div>
-
-          {/* Apply Button */}
-          <div className="pt-4">
-            <button
-              type="button"
-              className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-all"
-            >
-              Apply for Internship
-            </button>
-          </div>
-        </form>
+        </div>
       </main>
 
       {/* Footer */}
@@ -258,6 +166,6 @@ const ViewProjectForm = () => {
   );
 };
 
-export default ViewProjectForm;
+export default ViewProject;
 
 
