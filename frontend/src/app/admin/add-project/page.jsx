@@ -18,8 +18,8 @@ const Navbar = () => {
             <a href="/admin/manage-project" className="text-white hover:text-indigo-100">
               Manage Projects
             </a>
-            <a href="/admin/Add-project" className="text-white hover:text-indigo-100">
-              Add Project
+            <a href="/admin/update-projects" className="text-white hover:text-indigo-100">
+          update Projects
             </a>
             <a href="/admin/dashboard" className="text-white hover:text-indigo-100">
               Dashboard
