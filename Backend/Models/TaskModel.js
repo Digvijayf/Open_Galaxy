@@ -36,7 +36,12 @@ const taskSchema = new Schema({
     enum: ['Low', 'Medium', 'High', 'Urgent'], // Priority levels
     default: 'Medium', // Default priority is Medium
   },
+  project: {
+    type: Schema.Types.ObjectId,
+    ref: 'project', // Reference to the Project model
+    required: true, // Task must be associated with a project
+  }
 }, { timestamps: true }); // Automatically add createdAt and updatedAt fields
 
 // Create a Mongoose model for the Task
-const Task = model('Task', taskSchema);
+module.exports = model('Task', taskSchema);

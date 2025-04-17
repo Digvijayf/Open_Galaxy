@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // Add Navbar Component
 const Navbar = () => {
@@ -85,6 +86,8 @@ const Footer = () => {
 
 const Login = () => {
 
+  const router = useRouter();
+
   const loginForm = useFormik({
     initialValues: {
       email: '',
@@ -93,21 +96,19 @@ const Login = () => {
     onSubmit: (values) => {
       console.log(values);
 
-      axios.post('http://localhost:5000/user/authenticate',values)
-      .then((result) => {
-        toast.success('login successful');
-        console.log(result.data?.token);
-        localStorage.setItem('token',result.data?.token);
+      axios.post('http://localhost:5000/user/authenticate', values)
+        .then((result) => {
+          toast.success('login successful');
+          console.log(result.data?.token);
+          localStorage.setItem('token', result.data?.token);
+          router.push('/user/enroll');
+        }).catch((err) => {
+          console.log(err);
+          toast.error('login failed');
+        });
+    }
+  });
 
-    }).catch((err) => {
-        console.log(err);
-        toast.error('login failed');
-    });
-  }
-
-})
-  
-  
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
