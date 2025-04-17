@@ -4,7 +4,85 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+
+// Add Navbar Component
+const Navbar = () => {
+  return (
+    <nav className="bg-indigo-600 py-4 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center">
+          <Link href="/" className="text-white text-xl font-bold">
+            Open Galaxy Admin
+          </Link>
+          <div className="flex space-x-6">
+            <Link href="/admin/manage-project" className="text-white hover:text-indigo-100">
+              Manage Projects
+            </Link>
+            <Link href="/admin/add-project" className="text-white hover:text-indigo-100">
+              Add Project
+            </Link>
+            <Link href="/admin/manage-users" className="text-white hover:text-indigo-100">
+              Manage Users
+            </Link>
+            <Link href="/admin/dashboard" className="text-white hover:text-indigo-100">
+              Dashboard
+            </Link>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+// Add Footer Component
+const Footer = () => {
+  return (
+    <footer className="bg-gray-800 text-white py-8 mt-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Open Galaxy</h3>
+            <p className="text-gray-400 text-sm">
+              Managing open source projects efficiently.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/admin/dashboard" className="text-gray-400 hover:text-white">
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link href="/admin/manage-project" className="text-gray-400 hover:text-white">
+                  Projects
+                </Link>
+              </li>
+              <li>
+                <Link href="/admin/manage-users" className="text-gray-400 hover:text-white">
+                  Users
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Contact</h3>
+            <p className="text-gray-400 text-sm">
+              Email: admin@opengalaxy.com<br />
+              Phone: (555) 123-4567
+            </p>
+          </div>
+        </div>
+        <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400 text-sm">
+          © {new Date().getFullYear()} Open Galaxy. All rights reserved.
+        </div>
+      </div>
+    </footer>
+  );
+};
 
 const Updateprojects = () => {
 
@@ -37,7 +115,8 @@ const Updateprojects = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
       <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
         <h2 className="text-2xl font-bold mb-4">Add a New Project</h2>
         {
@@ -170,7 +249,8 @@ const Updateprojects = () => {
             </Formik>
           )}
       </div>
-    </>
+      <Footer />
+    </div>
   )
 }
 

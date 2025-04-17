@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+const {Schema, model} = require('../connection');
 
 // Define the schema for a Task
-const taskSchema = new mongoose.Schema({
+const taskSchema = new Schema({
   title: {
     type: String,
     required: true, // Task must have a title
@@ -39,6 +39,4 @@ const taskSchema = new mongoose.Schema({
 }, { timestamps: true }); // Automatically add createdAt and updatedAt fields
 
 // Create a Mongoose model for the Task
-const Task = mongoose.model('Task', taskSchema);
-
-module.exports = Task;
+const Task = model('Task', taskSchema);
