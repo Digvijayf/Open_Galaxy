@@ -132,7 +132,7 @@ const AddProject = () => {
 
       // send values to backend
       //sending request to backend
-      axios.post('http://localhost:5000/task/add', value)
+      axios.post('http://localhost:5000/project/add', value)
         .then((result) => {
           toast.success('project registered successfully');
           resetForm();
