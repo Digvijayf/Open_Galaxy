@@ -4,6 +4,84 @@ import classes from './login.module.css';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
+
+// Add Navbar Component
+const Navbar = () => {
+  return (
+    <nav className="bg-indigo-600 py-4 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center">
+          <Link href="/" className="text-white text-xl font-bold">
+            Open Galaxy
+          </Link>
+          <div className="flex space-x-6">
+            <Link href="/browse-projects" className="text-white hover:text-indigo-100">
+              Browse Projects
+            </Link>
+            <Link href="/About" className="text-white hover:text-indigo-100">
+              About
+            </Link>
+            <Link href="/resources" className="text-white hover:text-indigo-100">
+              Resources
+            </Link>
+            <Link href="/contact" className="text-white hover:text-indigo-100">
+              Contact
+            </Link>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+// Add Footer Component
+const Footer = () => {
+  return (
+    <footer className="bg-gray-800 text-white py-8 mt-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Open Galaxy</h3>
+            <p className="text-gray-400 text-sm">
+              Your gateway to open source opportunities.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/browse-projects" className="text-gray-400 hover:text-white">
+                  Browse Projects
+                </Link>
+              </li>
+              <li>
+                <Link href="/companies" className="text-gray-400 hover:text-white">
+                  Companies
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources" className="text-gray-400 hover:text-white">
+                  Resources
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Contact</h3>
+            <p className="text-gray-400 text-sm">
+              Email: contact@opengalaxy.com<br />
+              Phone: (555) 123-4567
+            </p>
+          </div>
+        </div>
+        <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400 text-sm">
+          © {new Date().getFullYear()} Open Galaxy. All rights reserved.
+        </div>
+      </div>
+    </footer>
+  );
+};
 
 const Login = () => {
 
@@ -31,7 +109,8 @@ const Login = () => {
   
   
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
       <div className="max-w-lg mx-auto mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-900 dark:border-neutral-700">
         <div className="p-4 sm:p-7">
           <div className="text-center">
@@ -194,7 +273,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-
+      <Footer />
     </div>
   )
 }
