@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast, Toaster } from 'react-hot-toast';
+import Link from 'next/link';
 
 const EnrollmentPage = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -13,7 +14,7 @@ const EnrollmentPage = () => {
       try {
         // Get token from localStorage
         const token = localStorage.getItem('token');
-        
+
         if (!token) {
           setError('Please login to view your enrollments');
           setLoading(false);
@@ -25,10 +26,11 @@ const EnrollmentPage = () => {
             'x-auth-token': token
           }
         });
+        console.log('Enrollment data:', response.data);
 
         setEnrollments(response.data);
         setLoading(false);
-        
+
       } catch (err) {
         console.error('Error fetching enrollments:', err);
         const errorMessage = err.response?.data?.message || 'Failed to load enrollment data.';
@@ -91,26 +93,25 @@ const EnrollmentPage = () => {
                 {enrollments.map((enrollment) => (
                   <tr key={enrollment._id} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-4 py-2">{enrollment.project.title}</td>
-                    <td className="border border-gray-300 px-4 py-2">{enrollment.project.company}</td>
+                    <td className="border border-gray-300 px-4 py-2">{enrollment.project.companyName}</td>
                     <td className="border border-gray-300 px-4 py-2">
                       {new Date(enrollment.createdAt).toLocaleDateString()}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
-                      <span className={`px-2 py-1 rounded-full text-sm ${
-                        enrollment.status === 'active' 
-                          ? 'bg-green-100 text-green-800' 
+                      <span className={`px-2 py-1 rounded-full text-sm ${enrollment.status === 'active'
+                          ? 'bg-green-100 text-green-800'
                           : 'bg-yellow-100 text-yellow-800'
-                      }`}>
+                        }`}>
                         {enrollment.status}
                       </span>
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
-                      <button
-                        onClick={() => window.location.href = `/view-project/${enrollment.project._id}`}
+                      <Link
+                        href={`/view-project/${enrollment.project._id}`}
                         className="text-indigo-600 hover:text-indigo-800"
                       >
                         View Project
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -119,7 +120,7 @@ const EnrollmentPage = () => {
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-600 mb-4">You haven't enrolled in any projects yet.</p>
-              <a 
+              <a
                 href="/browse-projects"
                 className="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
               >

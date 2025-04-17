@@ -31,7 +31,7 @@ router.get('/getall', (req, res) => {
 
 router.get('/user', verifyToken, (req, res) => {
 
-    Model.find({user : req.user._id})
+    Model.find({user : req.user._id}).populate('project')
         .then((result) => {
             res.status(200).json(result);
         }).catch((err) => {
