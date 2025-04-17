@@ -26,7 +26,7 @@ const Navbar = () => {
 // ProjectCard Component
 const ProjectCard = ({ id, title, description, language, image, tags, createdAt, enrollInProject }) => {
   console.log(enrollInProject);
-  
+
   return (
     <div className="max-w-xs w-full rounded-lg overflow-hidden shadow-md bg-white">
       <img src={image} alt={title} className="w-full h-40 object-cover" />
@@ -40,7 +40,7 @@ const ProjectCard = ({ id, title, description, language, image, tags, createdAt,
         <button onClick={enrollInProject} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none w-full">
           Apply Now
         </button>
-        <Link href={'/view-project/'+ id } className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none w-full">
+        <Link href={'/view-project/' + id} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none w-full">
           View Details
         </Link>
       </div>
@@ -236,7 +236,7 @@ const BrowsePage = () => {
 
   const enrollInProject = async (projectId) => {
     console.log(projectId);
-    
+
 
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/enroll/checkenrolled/${projectId}`, {
       headers: {
@@ -244,11 +244,12 @@ const BrowsePage = () => {
       },
     })
       .then((response) => {
-        
+
+
         if (response.status === 200 && response.data.isEnrolled) {
           alert('You are already enrolled in this project.');
           return;
-        } else {
+        } else if (response.status === 203) {
           axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/enroll/add`,
             { project: projectId }, {
@@ -256,19 +257,19 @@ const BrowsePage = () => {
               'x-auth-token': token,
             },
           })
-          .then(
-            (response) => {
-              if (response.status === 200) {
-                toast.success('Successfully enrolled in the project!');
-              } else {
-                toast.error('Failed to enroll in the project. Please try again.');
-              }
-            })
-          .catch((error) => {
-            console.error('Error enrolling in project:', error);
-            alert('An error occurred while enrolling in the project. Please try again later.');
-          }
-          )
+            .then(
+              (response) => {
+                if (response.status === 200) {
+                  toast.success('Successfully enrolled in the project!');
+                } else {
+                  toast.error('Failed to enroll in the project. Please try again.');
+                }
+              })
+            .catch((error) => {
+              console.error('Error enrolling in project:', error);
+              alert('An error occurred while enrolling in the project. Please try again later.');
+            }
+            )
 
         }
       })
@@ -277,7 +278,7 @@ const BrowsePage = () => {
         alert('An error occurred while checking enrollment. Please try again later.');
       });
 
-    
+
   };
 
   return (
@@ -291,8 +292,8 @@ const BrowsePage = () => {
           <div className="mb-8 flex justify-between items-center">
             <h2 className="text-3xl font-bold text-gray-800">Featured Opportunities</h2>
             <div className="inline-flex rounded-md shadow">
-              <Link 
-                href="/browse-projects" 
+              <Link
+                href="/browse-projects"
                 className="px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-50"
               >
                 View All
@@ -303,22 +304,20 @@ const BrowsePage = () => {
           {/* Tabs */}
           <div className="mb-8 border-b">
             <div className="flex space-x-8">
-              <button 
-                className={`pb-4 font-medium ${
-                  activeTab === 'students' 
-                    ? 'text-indigo-600 border-b-2 border-indigo-600' 
-                    : 'text-gray-500 hover:text-indigo-600'
-                }`}
+              <button
+                className={`pb-4 font-medium ${activeTab === 'students'
+                  ? 'text-indigo-600 border-b-2 border-indigo-600'
+                  : 'text-gray-500 hover:text-indigo-600'
+                  }`}
                 onClick={() => setActiveTab('students')}
               >
                 For Students
               </button>
-              <button 
-                className={`pb-4 font-medium ${
-                  activeTab === 'companies' 
-                    ? 'text-indigo-600 border-b-2 border-indigo-600' 
-                    : 'text-gray-500 hover:text-indigo-600'
-                }`}
+              <button
+                className={`pb-4 font-medium ${activeTab === 'companies'
+                  ? 'text-indigo-600 border-b-2 border-indigo-600'
+                  : 'text-gray-500 hover:text-indigo-600'
+                  }`}
                 onClick={() => setActiveTab('companies')}
               >
                 For Companies
@@ -329,8 +328,8 @@ const BrowsePage = () => {
           {activeTab === 'students' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredInternships.map(internship => (
-                <div 
-                  key={internship.id} 
+                <div
+                  key={internship.id}
                   className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className="p-6">
@@ -346,7 +345,7 @@ const BrowsePage = () => {
                     </div>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {internship.tags.map((tag, index) => (
-                        <span 
+                        <span
                           key={index}
                           className="px-2 py-1 bg-indigo-100 text-indigo-800 text-sm rounded"
                         >
@@ -354,7 +353,7 @@ const BrowsePage = () => {
                         </span>
                       ))}
                     </div>
-                    <button 
+                    <button
                       onClick={() => enrollInProject(internship.id)}
                       className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
                     >
@@ -370,7 +369,7 @@ const BrowsePage = () => {
               <p className="text-gray-600 mb-6">
                 Post your open source opportunities and connect with talented developers.
               </p>
-              <Link 
+              <Link
                 href="/admin/Add-project"
                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
               >

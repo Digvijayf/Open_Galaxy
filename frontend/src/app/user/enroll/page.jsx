@@ -28,6 +28,7 @@ const EnrollmentPage = () => {
 
         setEnrollments(response.data);
         setLoading(false);
+        
       } catch (err) {
         console.error('Error fetching enrollments:', err);
         const errorMessage = err.response?.data?.message || 'Failed to load enrollment data.';

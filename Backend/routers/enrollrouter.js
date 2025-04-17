@@ -42,10 +42,14 @@ router.get('/user', verifyToken, (req, res) => {
 
 router.get('/checkenrolled/:projectid', verifyToken, (req, res) => {
 
-    Model.find({ project: req.params.projectid, user: req.user._id })
+    Model.findOne({ project: req.params.projectid, user: req.user._id })
         .then((result) => {
+            console.log(result);
+            
             if (!result) {
-                res.status(404).json({ message: 'No enrollment found for the given project and user.' });
+                console.log('not enrolled');
+                
+                res.status(203).json({ message: 'No enrollment found for the given project and user.' });
             } else {
                 res.status(200).json({
                     "isEnrolled": true
@@ -91,28 +95,17 @@ router.delete('/delete/:id', (req, res) => {
         });
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', verifyToken, async (req, res) => {
   try {
-    const { user, project } = req.body;
-
-    // Check if already enrolled
-    const existingEnrollment = await Model.findOne({ user, project });
-    if (existingEnrollment) {
-      return res.status(400).json({ message: 'Already applied for this project' });
-    }
-
+    const { project } = req.body;
+    
     // Create new enrollment
     const enrollment = new Model({
-      user,
+      user: req.user._id,
       project
     });
 
     await enrollment.save();
-
-    // Populate user and project details
-    const populatedEnrollment = await Model.findById(enrollment._id)
-      .populate('user', 'name email')
-      .populate('project', 'title description');
 
     res.status(201).json({
       message: 'Successfully applied',

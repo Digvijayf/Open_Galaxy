@@ -139,18 +139,18 @@ const OpenGalaxyLandingPage = () => {
             
           </div>
           <div className="flex items-center space-x-4">
-            <button 
+            <Link
               className="text-indigo-600 hover:text-indigo-800"
-              onClick={() => setShowLoginModal(true)}
+              href="login"
             >
               Log In
-            </button>
-            <button 
+            </Link>
+            <Link 
               className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-              onClick={() => setShowSignupModal(true)}
+              href="sign-up"
             >
               Sign Up
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
