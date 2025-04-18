@@ -147,6 +147,7 @@ const ViewProject = () => {
               <li><a href="/" className="hover:text-indigo-600">Home</a></li>
               <li><a href="/browse-projects" className="hover:text-indigo-600">Browse Projects</a></li>
               <li><a href="/post-internship" className="hover:text-indigo-600">Post Internship</a></li>
+              <li><a href="/login" className="hover:text-indigo-600">login</a></li>
             </ul>
           </div>
           <div>
