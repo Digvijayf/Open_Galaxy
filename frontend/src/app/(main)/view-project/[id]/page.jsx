@@ -10,19 +10,33 @@ const ViewProject = () => {
   const [project, setProject] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/project/getbyid/${id}`);
-        setProject(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load project details.');
-        setLoading(false);
-      }
-    };
+  const [taskList, setTaskList] = useState([]);
 
+  const fetchProject = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/project/getbyid/${id}`);
+      setProject(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to load project details.');
+      setLoading(false);
+    }
+  };
+
+  const fetchTasks = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/task/getbyproject/${id}`);
+      setTaskList(response.data);
+      console.log(response.data);
+
+    } catch (err) {
+      toast.error('Failed to load tasks.');
+    }
+  }
+
+  useEffect(() => {
     fetchProject();
+    fetchTasks();
   }, [id]);
 
   if (loading) {
@@ -66,8 +80,8 @@ const ViewProject = () => {
       <main className="flex-grow max-w-5xl mx-auto px-6 py-10 bg-white mt-10 rounded-xl shadow-md">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-semibold text-indigo-700">Project Details</h1>
-          <a 
-            href="/browse-projects" 
+          <a
+            href="/browse-projects"
             className="text-indigo-600 hover:text-indigo-800"
           >
             Back to Projects
@@ -121,13 +135,60 @@ const ViewProject = () => {
           {/* Project Status */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500 mb-2">Status</h3>
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-              project?.status === 'Open for Applications'
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${project?.status === 'Open for Applications'
                 ? 'bg-green-100 text-green-800'
                 : 'bg-red-100 text-red-800'
-            }`}>
+              }`}>
               {project?.status}
             </span>
+          </div>
+
+          {/* Project Tasks */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-800">Project Tasks</h3>
+              <div className="text-sm text-gray-500">{taskList.length} tasks</div>
+            </div>
+
+            {taskList.length > 0 ? (
+              <div className="space-y-4">
+                {taskList.map((task) => (
+                  <div key={task._id} className="border border-gray-200 rounded-md p-4 bg-white">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-medium text-gray-900">{task.title}</h4>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        task.priority === 'High' || task.priority === 'Urgent' 
+                          ? 'bg-red-100 text-red-800' 
+                          : task.priority === 'Medium'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-green-100 text-green-800'
+                      }`}>
+                        {task.priority}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">{task.description}</p>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className={`px-2 py-1 rounded-full ${
+                        task.status === 'Completed'
+                          ? 'bg-green-100 text-green-800'
+                          : task.status === 'In Progress'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {task.status}
+                      </span>
+                      <span className="text-gray-500">
+                        Due: {new Date(task.deadline).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-gray-500">
+                No tasks have been added to this project yet.
+              </div>
+            )}
           </div>
         </div>
       </main>
